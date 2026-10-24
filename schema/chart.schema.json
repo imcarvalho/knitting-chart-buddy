@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://knitting-chart-buddy.local/chart.schema.json",
+  "title": "Knitting Chart Buddy: extracted pattern",
+  "type": "object",
+  "required": ["pattern", "source", "symbols", "charts"],
+  "properties": {
+    "pattern": { "type": "string" },
+    "source": {
+      "type": "object",
+      "required": ["file", "sha256"],
+      "properties": {
+        "file": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "symbols": {
+      "description": "Legend entries for the glyph symbols used, so the app can redraw them.",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/symbol" }
+    },
+    "charts": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/chart" }
+    }
+  },
+  "$defs": {
+    "symbol": {
+      "type": "object",
+      "required": ["id", "name", "abbr", "kind", "width"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "abbr": { "type": "string" },
+        "kind": { "enum": ["stitch", "none", "ds", "increase", "cable"] },
+        "width": { "type": "integer", "minimum": 1 },
+        "strokes": {
+          "description": "Line strokes in cell units: [x0, y0, x1, y1], x from the glyph's left edge, y from the top of the row (0) to the bottom (1).",
+          "type": "array",
+          "items": { "type": "array", "items": { "type": "number" }, "minItems": 4, "maxItems": 4 }
+        },
+        "marks": {
+          "description": "Cells (0-based, left to right) with the purl mark near the bottom.",
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "chart": {
+      "type": "object",
+      "required": ["id", "title", "construction", "columns", "repeats", "sizeMarkers", "rows", "warnings"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "construction": { "enum": ["flat", "round"] },
+        "columns": { "type": "integer", "description": "Number of numbered columns. Cells outside get indices past the numbers (> columns, or <= 0)." },
+        "repeats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["fromCol", "toCol", "times", "side"],
+            "properties": {
+              "fromCol": { "type": "integer" },
+              "toCol": { "type": "integer" },
+              "times": { "type": "integer", "minimum": 1 },
+              "side": { "enum": ["left", "right"] }
+            }
+          }
+        },
+        "sizeMarkers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["size", "row", "kind"],
+            "properties": {
+              "size": { "type": "integer" },
+              "row": { "type": "integer" },
+              "kind": { "enum": ["start", "end"] },
+              "text": { "type": "string" }
+            }
+          }
+        },
+        "size": {
+          "type": "object",
+          "required": ["size", "startRow", "endRow"],
+          "properties": {
+            "size": { "type": "integer" },
+            "startRow": { "type": "integer" },
+            "endRow": { "type": "integer" }
+          }
+        },
+        "notes": { "type": "array", "items": { "type": "string" } },
+        "edgeNote": { "type": "string" },
+        "rows": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/row" } },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["check", "severity", "row", "message"],
+            "properties": {
+              "check": { "type": "string" },
+              "severity": { "enum": ["info", "warning"] },
+              "row": { "type": "integer" },
+              "cols": { "type": "array", "items": { "type": "integer" } },
+              "symbol": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "row": {
+      "type": "object",
+      "required": ["number", "side", "direction", "cells", "groups"],
+      "properties": {
+        "number": { "type": "integer" },
+        "side": { "enum": ["RS", "WS"] },
+        "direction": { "enum": ["rtl", "ltr"], "description": "Working direction." },
+        "cells": {
+          "description": "All cells in drawn order, left to right.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["col", "symbol"],
+            "properties": {
+              "col": { "type": "integer" },
+              "symbol": { "type": "string", "description": "empty | purl | none | ds | cable | an increase id" },
+              "cableId": { "type": "string" },
+              "arrow": { "enum": ["left", "right"], "description": "Short-row start arrow drawn in this (unworked) cell." }
+            }
+          }
+        },
+        "groups": {
+          "description": "Stitch groups in working order. Every group carries the exact sentence to show.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/group" }
+        },
+        "shortRow": {
+          "type": "object",
+          "required": ["start", "startCol", "turnAfterCol"],
+          "properties": {
+            "start": { "enum": ["left", "right"] },
+            "startCol": { "type": "integer" },
+            "turnAfterCol": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "required": ["cols", "kind", "text", "short"],
+      "properties": {
+        "cols": { "type": "array", "minItems": 1, "items": { "type": "integer" }, "description": "In working order." },
+        "kind": { "enum": ["knit", "purl", "ds", "increase", "cable"] },
+        "count": { "type": "integer", "minimum": 1 },
+        "text": { "type": "string" },
+        "short": { "type": "string" },
+        "symbol": { "type": "string" },
+        "cableId": { "type": "string" },
+        "legend": { "type": "string" },
+        "abbr": { "type": "string" },
+        "cn": {
+          "type": "object",
+          "required": ["count", "hold"],
+          "properties": {
+            "count": { "type": "integer", "minimum": 1 },
+            "hold": { "enum": ["front", "back"] }
+          }
+        },
+        "steps": { "type": "array", "items": { "type": "string" } },
+        "verified": { "type": "boolean" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "enum": ["knit", "purl"] } } },
+          "then": { "required": ["count"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "cable" } } },
+          "then": { "required": ["symbol", "cableId", "legend", "abbr"] }
+        }
+      ]
+    }
+  }
+}
