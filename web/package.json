@@ -11,7 +11,7 @@
     "test": "node scripts/ensure-sample.mjs && vitest run",
     "test:watch": "vitest",
     "e2e": "node scripts/ensure-sample.mjs && playwright test",
-    "sample": "cd ../extractor && uv run python -m chart_buddy.cli extract ../fixtures/Shanon_Sweater_tamanho3-back.pdf --legend ../legend/shanon.json --id back-yoke --title 'Back yoke' --size 3 -o ../web/public/samples/back-yoke.json"
+    "sample": "cd ../extractor && uv run python -m chart_buddy.cli extract ../fixtures/Shanon_Sweater_tamanho3-back.pdf --legend ../legend/chart-symbols.json --id back-yoke --title 'Back yoke' --size 3 -o ../web/public/samples/back-yoke.json"
   },
   "dependencies": {
     "idb-keyval": "^6.3.0",

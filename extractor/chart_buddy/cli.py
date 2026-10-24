@@ -11,7 +11,7 @@ from .chart import Options, extract
 from .pdf_grid import ExtractionError
 from .symbols import Legend
 
-DEFAULT_LEGEND = Path(__file__).resolve().parents[2] / "legend" / "shanon.json"
+DEFAULT_LEGEND = Path(__file__).resolve().parents[2] / "legend" / "chart-symbols.json"
 
 
 def main(argv: list[str] | None = None) -> int:

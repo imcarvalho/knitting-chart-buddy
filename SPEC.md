@@ -43,7 +43,7 @@ knitting-chart-buddy/
   fixtures/
     Shanon_Sweater_tamanho3-back.pdf   back yoke chart, size 3, one page (see 3.1)
   legend/
-    shanon.json            symbol legend for this pattern: glyph templates + meanings (see 3.3)
+    chart-symbols.json     symbol legend for this pattern: glyph templates + meanings (see 3.3)
   extractor/               Python, PyMuPDF
     pyproject.toml
     chart_buddy/
@@ -126,7 +126,7 @@ The charts are **vector**, not images. That is what makes v1 feasible.
 ### 3.2 Legend and meaning of each symbol
 
 The chart PDF does not include the legend. The legend lives in the repository as
-`legend/shanon.json`: for each symbol, an id, its name as printed in the pattern, its width in
+`legend/chart-symbols.json`: for each symbol, an id, its name as printed in the pattern, its width in
 cells, its glyph template (normalised segments and marks, in cell units) and its meaning on RS and
 WS. Build the templates once from the glyphs as they appear in the fixture chart (every cable used
 in the back yoke appears there many times) and check them against the original legend page by eye.
@@ -286,7 +286,7 @@ Python 3.12, PyMuPDF (`pymupdf`), no OCR, no ML.
 - Line segments: collect all segments whose bbox lies within one row band. Group connected or
   overlapping segments into a cable glyph spanning N adjacent cells. Normalise the glyph to the
   cell grid (relative segment endpoints in cell units) and match against the glyph templates in
-  `legend/shanon.json`. Matching: compare the set of normalised segments with a tolerance;
+  `legend/chart-symbols.json`. Matching: compare the set of normalised segments with a tolerance;
   the small "=" mark is part of the signature and decides which stitch is the purl.
 - Ignore large translucent filled rectangles (row shading) and anything outside the grid.
 - Any cell or glyph that does not match a known symbol is an error, reported with page, row and
@@ -311,7 +311,7 @@ group. Stop at the short-row turn.
 
 ```
 python -m chart_buddy.cli extract fixtures/Shanon_Sweater_tamanho3-back.pdf \
-    --legend legend/shanon.json --id back-yoke --title "Back yoke" --size 3 -o out/back.json
+    --legend legend/chart-symbols.json --id back-yoke --title "Back yoke" --size 3 -o out/back.json
 python -m chart_buddy.cli show out/back.json --row 2
 ```
 

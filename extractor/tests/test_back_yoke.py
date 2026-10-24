@@ -16,7 +16,7 @@ from chart_buddy.symbols import Legend
 
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = ROOT / "fixtures" / "Shanon_Sweater_tamanho3-back.pdf"
-LEGEND = ROOT / "legend" / "shanon.json"
+LEGEND = ROOT / "legend" / "chart-symbols.json"
 SCHEMA = ROOT / "schema" / "chart.schema.json"
 
 
