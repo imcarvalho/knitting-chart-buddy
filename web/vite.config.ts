@@ -2,9 +2,23 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { cpSync, existsSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+
+// pdf.js needs its character maps (for CJK fonts) and standard fonts as static files.
+function copyPdfjsAssets() {
+  const from = fileURLToPath(new URL('./node_modules/pdfjs-dist/', import.meta.url))
+  const to = fileURLToPath(new URL('./public/pdfjs/', import.meta.url))
+  for (const dir of ['cmaps', 'standard_fonts']) {
+    if (!existsSync(to + dir)) cpSync(from + dir, to + dir, { recursive: true })
+  }
+  return { name: 'copy-pdfjs-assets' }
+}
 
 export default defineConfig({
+  server: { fs: { allow: ['..'] } },
   plugins: [
+    copyPdfjsAssets(),
     react(),
     VitePWA({
       registerType: 'autoUpdate',
@@ -23,7 +37,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,json}'],
+        globPatterns: ['**/*.{js,mjs,css,html,svg,png,json,bcmap,pfb,ttf}'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
       },
     }),

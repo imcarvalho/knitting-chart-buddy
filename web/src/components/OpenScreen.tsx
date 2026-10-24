@@ -1,6 +1,8 @@
 import { useState, type DragEvent } from 'react'
+import type { PreparedChart } from '../extractor'
 import { loadProgress, loadRecent, type RecentEntry } from '../state/storage'
 import type { PatternDoc } from '../types'
+import { ChartSetup } from './ChartSetup'
 
 export const SAMPLE_URL = `${import.meta.env.BASE_URL}samples/back-yoke.json`
 
@@ -33,16 +35,31 @@ export function parseDoc(text: string): PatternDoc {
 export function OpenScreen({ onOpen, onOpenRecent }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
+  const [busy, setBusy] = useState<string | null>(null)
+  const [prepared, setPrepared] = useState<PreparedChart | null>(null)
   const recent = loadRecent()
 
   const readFile = async (file: File | undefined) => {
     if (!file) return
+    setError(null)
+    const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name)
     try {
-      onOpen(parseDoc(await file.text()))
-      setError(null)
+      if (isPdf) {
+        setBusy(`Reading ${file.name}...`)
+        const { prepareChartFromFile } = await import('../extractor/browser')
+        setPrepared(await prepareChartFromFile(file))
+      } else {
+        onOpen(parseDoc(await file.text()))
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setBusy(null)
     }
+  }
+
+  if (prepared) {
+    return <ChartSetup prepared={prepared} onStart={onOpen} onCancel={() => setPrepared(null)} />
   }
 
   const openSample = async () => {
@@ -74,12 +91,12 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
         onDrop={onDrop}
         data-testid="drop-zone"
       >
-        <p>Drop an extracted chart file (.json) here, or</p>
+        <p>Drop a one-page chart PDF (or an extracted .json chart) here, or</p>
         <label className="button primary">
           Choose a file
           <input
             type="file"
-            accept="application/json,.json"
+            accept="application/pdf,.pdf,application/json,.json"
             className="visually-hidden"
             onChange={(e) => void readFile(e.target.files?.[0])}
             data-testid="file-input"
@@ -91,6 +108,11 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
           Open the sample: Shanon Sweater, back yoke
         </button>
       </p>
+      {busy && (
+        <p className="busy" role="status">
+          {busy}
+        </p>
+      )}
       {error && (
         <p className="error" role="alert">
           {error}

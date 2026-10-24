@@ -484,3 +484,43 @@ button.primary,
     animation: none !important;
   }
 }
+
+/* Chart setup after reading a PDF */
+.chart-setup {
+  display: grid;
+  gap: 14px;
+  max-width: 640px;
+}
+
+.chart-setup label {
+  display: grid;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.chart-setup input,
+.chart-setup select {
+  min-height: 44px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 0.5em;
+  font-weight: 400;
+}
+
+.setup-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.setup-warnings {
+  border: 2px solid var(--front);
+  border-radius: 10px;
+  padding: 4px 14px;
+}
+
+.busy {
+  font-weight: 600;
+  color: var(--accent);
+}
