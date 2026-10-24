@@ -12,10 +12,7 @@ at a time. See [SPEC.md](SPEC.md).
 ## Pattern files are not in the repository
 
 The chart PDFs (`fixtures/`) and the chart JSON extracted from them (`web/public/samples/`) are
-copyrighted pattern content and are git-ignored. Put your own copies in `fixtures/`:
-
-- `fixtures/Shanon_Sweater_tamanho3-back.pdf`: the back yoke chart page, size 3.
-- `fixtures/legend.pdf`: the abbreviation page (only used to check glyphs by eye).
+copyrighted pattern content and are git-ignored. Put your own copies in `fixtures/`.
 
 The extractor tests and `pnpm sample` need the back yoke PDF. `pnpm test` and `pnpm e2e` generate
 the sample JSON from it when it is missing.
