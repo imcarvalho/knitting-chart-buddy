@@ -7,6 +7,17 @@ at a time. See [SPEC.md](SPEC.md).
 - `legend/shanon.json`: symbol legend and glyph templates for the Shanon Sweater.
 - `web/`: React + TypeScript + Vite PWA that steps through an extracted chart.
 
+## Pattern files are not in the repository
+
+The chart PDFs (`fixtures/`) and the chart JSON extracted from them (`web/public/samples/`) are
+copyrighted pattern content and are git-ignored. Put your own copies in `fixtures/`:
+
+- `fixtures/Shanon_Sweater_tamanho3-back.pdf`: the back yoke chart page, size 3.
+- `fixtures/legend.pdf`: the abbreviation page (only used to check glyphs by eye).
+
+The extractor tests and `pnpm sample` need the back yoke PDF. `pnpm test` and `pnpm e2e` generate
+the sample JSON from it when it is missing.
+
 ## Extract a chart
 
 ```sh
@@ -20,7 +31,7 @@ uv run python -m chart_buddy.cli show ../out/back.json --row 2
 
 ```sh
 cd web && pnpm install
-pnpm sample   # regenerate public/samples/back-yoke.json from the fixture
+pnpm sample   # generate public/samples/back-yoke.json from the fixture PDF
 pnpm dev
 ```
 

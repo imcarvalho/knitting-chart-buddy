@@ -48,7 +48,7 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
   const openSample = async () => {
     try {
       const res = await fetch(SAMPLE_URL)
-      if (!res.ok) throw new Error(`Could not load the sample (${res.status}).`)
+      if (!res.ok) throw new Error('The sample chart is not bundled in this build. Run `pnpm sample` first.')
       onOpen(parseDoc(await res.text()))
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
