@@ -1,0 +1,12 @@
+.DS_Store
+out/
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+node_modules/
+dist/
+web/test-results/
+web/playwright-report/
+fixtures/
+web/public/samples/
