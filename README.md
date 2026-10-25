@@ -54,6 +54,32 @@ too. Keys: Space / → / Page Down next group,
 Backspace / ← / Page Up back, ↓ / ↑ next / previous row, `g` then a number to jump, `u` undo.
 Touch: tap the right / left half of the instruction card, swipe up / down for rows.
 
+## Styles and themes
+
+Styles are written in TypeScript with [vanilla-extract](https://vanilla-extract.style), which turns
+them into a static CSS file at build time. Each component has its own `*.css.ts` file next to it.
+
+`web/src/styles/` holds the shared parts, in three layers:
+
+- `palettes.ts`: colour primitives, the raw colours of each palette (fairyfloss, high contrast).
+- `themes.ts`: each theme maps the semantic tokens (`bg`, `surface`, `text`, `accent`, `front`,
+  `back`, ...) onto colours from its palette, and sets its label and colour scheme.
+- `tokens.css.ts`: the token contract. It turns every theme into CSS custom properties under
+  `:root[data-theme='<name>']`. Components only use these tokens (`vars.color.*`), never palette
+  colours.
+
+`global.css.ts` has the element styles (body, buttons, focus ring) and `ui.css.ts` the shared
+classes (primary button, form fields).
+
+To add a theme:
+
+1. Add its colours to `palettes.ts`.
+2. Add an entry to `themes` in `themes.ts`, with a value for every token. TypeScript fails the build
+   if one is missing.
+
+The settings menu lists every theme in `themes`, and the app sets `<html data-theme>` to the one
+chosen. Keep text at 4.5:1 contrast or more, and chart lines and controls at 3:1 or more.
+
 ## Deploy (GitHub Pages)
 
 `.github/workflows/deploy.yml` builds `web/` and publishes it on every push to `main` (or by hand

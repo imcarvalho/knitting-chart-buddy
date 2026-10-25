@@ -1,5 +1,6 @@
 import type { Group, PatternDoc } from '../types'
 import { GlyphCard } from './ChartStrip'
+import * as s from './InstructionCard.css'
 
 interface Props {
   doc: PatternDoc
@@ -12,20 +13,20 @@ interface Props {
 /** The current group's instruction. A polite live region, so each new group is announced. */
 export function InstructionCard({ doc, group, rowNumber, groupIndex, groupCount }: Props) {
   return (
-    <section className="instruction" aria-live="polite" aria-atomic="true" data-testid="instruction">
+    <section className={s.card} aria-live="polite" aria-atomic="true" data-testid="instruction">
       {group ? (
         <>
-          <p className="instruction-pos">
+          <p className={s.position} data-testid="instruction-pos">
             Row {rowNumber}, group {groupIndex + 1} of {groupCount}
           </p>
           {group.kind === 'cable' && group.cn && group.steps ? (
             <CableDetail doc={doc} group={group} />
           ) : (
-            <p className={`instruction-text kind-${group.kind}`}>{group.text}</p>
+            <p className={s.text}>{group.text}</p>
           )}
         </>
       ) : (
-        <p className="instruction-text">Nothing to work on this row.</p>
+        <p className={s.text}>Nothing to work on this row.</p>
       )}
     </section>
   )
@@ -35,21 +36,21 @@ function CableDetail({ doc, group }: { doc: PatternDoc; group: Group }) {
   const cn = group.cn!
   const holdFront = cn.hold === 'front'
   return (
-    <div className="cable">
-      <p className="cable-name">{group.legend}</p>
-      <div className="cable-main">
+    <div>
+      <p className={s.cableName}>{group.legend}</p>
+      <div className={s.cableMain}>
         {group.symbol && <GlyphCard doc={doc} symbolId={group.symbol} />}
-        <div className="cable-facts">
-          <p className="cable-cn">
-            <span className="big">{cn.count}</span> st{cn.count > 1 ? 's' : ''} on cable needle
+        <div>
+          <p className={s.cableFact}>
+            <span className={s.cableCount}>{cn.count}</span> st{cn.count > 1 ? 's' : ''} on cable needle
           </p>
-          <p className={`cable-hold ${holdFront ? 'front' : 'back'}`}>
-            Hold {holdFront ? 'in' : 'at the'} <strong>{holdFront ? 'FRONT' : 'BACK'}</strong>
+          <p className={s.cableFact}>
+            Hold {holdFront ? 'in' : 'at the'} <strong className={s.holdWord[cn.hold]}>{holdFront ? 'FRONT' : 'BACK'}</strong>
           </p>
         </div>
       </div>
-      <p className="instruction-text">{group.text}</p>
-      <ol className="cable-steps" aria-label="Steps">
+      <p className={s.cableText}>{group.text}</p>
+      <ol className={s.steps} aria-label="Steps">
         <li>
           sl{cn.count} to cn, {holdFront ? 'FRONT' : 'BACK'}
         </li>

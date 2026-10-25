@@ -6,6 +6,7 @@ import { patternHash } from './model/navigation'
 import { lastOpened, loadDoc, loadSettings, rememberDoc, saveSettings, type RecentEntry, type Settings } from './state/storage'
 import { useWakeLock, wakeLockSupported } from './state/wakeLock'
 import type { PatternDoc } from './types'
+import * as s from './App.css'
 
 interface Open {
   doc: PatternDoc
@@ -50,8 +51,7 @@ export default function App() {
 
   useEffect(() => {
     const root = document.documentElement
-    if (settings.theme === 'contrast') root.setAttribute('data-theme', 'contrast')
-    else root.removeAttribute('data-theme')
+    root.setAttribute('data-theme', settings.theme)
     root.classList.toggle('large-text', settings.largeText)
     saveSettings(settings)
   }, [settings])
@@ -70,10 +70,10 @@ export default function App() {
   const chart = open ? (open.doc.charts.find((c) => c.id === open.chartId) ?? open.doc.charts[0]) : null
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Knitting Chart Buddy</h1>
-        <div className="app-actions">
+    <div className={s.app}>
+      <header className={s.header}>
+        <h1 className={s.title}>Knitting Chart Buddy</h1>
+        <div className={s.actions}>
           {open && (
             <button type="button" onClick={() => setOpen(null)}>
               Charts

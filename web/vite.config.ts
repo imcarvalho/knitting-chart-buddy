@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
 import { VitePWA } from 'vite-plugin-pwa'
 import { cpSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
@@ -24,6 +25,7 @@ export default defineConfig({
   plugins: [
     copyPdfjsAssets(),
     react(),
+    vanillaExtractPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icons/icon.svg'],

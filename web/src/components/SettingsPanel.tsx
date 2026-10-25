@@ -1,4 +1,7 @@
 import type { Settings } from '../state/storage'
+import { themeNames, themes } from '../styles/themes'
+import { field } from '../styles/ui.css'
+import * as s from './SettingsPanel.css'
 
 interface Props {
   settings: Settings
@@ -9,16 +12,20 @@ interface Props {
 
 export function SettingsPanel({ settings, onChange, wakeLockSupported, wakeLockActive }: Props) {
   return (
-    <fieldset className="settings">
+    <fieldset className={s.settings}>
       <legend>Display</legend>
       <label>
         Theme{' '}
         <select
+          className={field}
           value={settings.theme}
           onChange={(e) => onChange({ ...settings, theme: e.target.value as Settings['theme'] })}
         >
-          <option value="fairyfloss">Fairyfloss</option>
-          <option value="contrast">High contrast</option>
+          {themeNames.map((name) => (
+            <option key={name} value={name}>
+              {themes[name].label}
+            </option>
+          ))}
         </select>
       </label>
       <label>

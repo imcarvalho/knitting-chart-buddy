@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type { Cell, Chart, Group, PatternDoc, Row } from '../types'
 import { rowByNumber } from '../model/navigation'
+import * as s from './ChartStrip.css'
 
 const CW = 26 // cell width
 const CH_MAIN = 30
@@ -45,9 +46,9 @@ export function ChartStrip({ doc, chart, row, group, reducedMotion }: Props) {
   const label = `Row ${row.number}${group ? `, current group on column${group.cols.length > 1 ? 's' : ''} ${group.cols.join(', ')}` : ''}`
 
   return (
-    <div className="strip-scroller" ref={scroller}>
+    <div className={s.scroller} ref={scroller}>
       <svg
-        className="strip"
+        className={s.strip}
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
@@ -57,7 +58,7 @@ export function ChartStrip({ doc, chart, row, group, reducedMotion }: Props) {
         {above && <RowCells doc={doc} row={above} y={yAbove} h={CH_CONTEXT} context />}
         {hl && (
           <rect
-            className="hl-bg"
+            className={s.highlightBg}
             x={hl.x0}
             y={yMain}
             width={hl.x1 - hl.x0}
@@ -68,7 +69,7 @@ export function ChartStrip({ doc, chart, row, group, reducedMotion }: Props) {
         <RowCells doc={doc} row={row} y={yMain} h={CH_MAIN} />
         {hl && (
           <rect
-            className="hl-outline"
+            className={s.highlightOutline}
             x={hl.x0 - 2}
             y={yMain - 2}
             width={hl.x1 - hl.x0 + 4}
@@ -78,7 +79,7 @@ export function ChartStrip({ doc, chart, row, group, reducedMotion }: Props) {
         )}
         {below && <RowCells doc={doc} row={below} y={yBelow} h={CH_CONTEXT} context />}
         {cols.map((c, i) => (
-          <text key={c} className="col-num" x={i * CW + CW / 2} y={yNums + NUM_H - 4} textAnchor="middle">
+          <text key={c} className={s.colNum} x={i * CW + CW / 2} y={yNums + NUM_H - 4} textAnchor="middle">
             {c}
           </text>
         ))}
@@ -86,9 +87,9 @@ export function ChartStrip({ doc, chart, row, group, reducedMotion }: Props) {
           const box = highlightBox(cols, [r.fromCol, r.toCol])
           if (!box) return null
           return (
-            <g key={k} className="repeat">
-              <path d={`M${box.x0 + 2} ${yBelow + 2} v-3 H${box.x1 - 2} v3`} />
-              <text x={(box.x0 + box.x1) / 2} y={yBelow + 12} textAnchor="middle">
+            <g key={k}>
+              <path className={s.repeatPath} d={`M${box.x0 + 2} ${yBelow + 2} v-3 H${box.x1 - 2} v3`} />
+              <text className={s.repeatText} x={(box.x0 + box.x1) / 2} y={yBelow + 12} textAnchor="middle">
                 ×{r.times}
               </text>
             </g>
@@ -108,9 +109,9 @@ function highlightBox(cols: number[], groupCols: number[]): { x0: number; x1: nu
 function RowCells({ doc, row, y, h, context }: { doc: PatternDoc; row: Row; y: number; h: number; context?: boolean }) {
   const drawnGlyphs = new Set<string>()
   return (
-    <g className={context ? 'row context' : 'row main'} data-row={row.number}>
+    <g className={context ? s.contextRow : undefined} data-row={row.number}>
       {row.cells.map((cell, i) => (
-        <CellShape key={cell.col} cell={cell} x={i * CW} y={y} h={h} />
+        <CellShape key={cell.col} cell={cell} x={i * CW} y={y} h={h} main={!context} />
       ))}
       {row.cells.map((cell, i) => {
         // Glyph symbols (cables, increases) are drawn once, across all their cells.
@@ -129,20 +130,20 @@ function glyphSymbol(row: Row, cell: Cell): string | undefined {
   return row.groups.find((g) => g.cableId === cell.cableId)?.symbol
 }
 
-function CellShape({ cell, x, y, h }: { cell: Cell; x: number; y: number; h: number }) {
+function CellShape({ cell, x, y, h, main }: { cell: Cell; x: number; y: number; h: number; main: boolean }) {
   return (
     <g>
-      <rect className={cell.symbol === 'none' ? 'cell none' : 'cell'} x={x} y={y} width={CW} height={h} />
+      <rect className={cell.symbol === 'none' ? s.cellNone : main ? s.cellMain : s.cell} x={x} y={y} width={CW} height={h} />
       {cell.symbol === 'purl' && (
-        <rect className="purl" x={x + CW * 0.3} y={y + h * 0.42} width={CW * 0.4} height={Math.max(2, h * 0.16)} />
+        <rect className={s.purl} x={x + CW * 0.3} y={y + h * 0.42} width={CW * 0.4} height={Math.max(2, h * 0.16)} />
       )}
       {cell.symbol === 'ds' && (
-        <text className="ds" x={x + CW / 2} y={y + h * 0.68} textAnchor="middle" fontSize={h * 0.45}>
+        <text className={s.cellText} x={x + CW / 2} y={y + h * 0.68} textAnchor="middle" fontSize={h * 0.45}>
           DS
         </text>
       )}
       {cell.arrow && (
-        <text className="arrow" x={x + CW / 2} y={y + h * 0.72} textAnchor="middle" fontSize={h * 0.6}>
+        <text className={s.cellText} x={x + CW / 2} y={y + h * 0.72} textAnchor="middle" fontSize={h * 0.6}>
           {cell.arrow === 'left' ? '←' : '→'}
         </text>
       )}
@@ -157,6 +158,7 @@ export function GlyphStrokes({
   y,
   w,
   h,
+  large = false,
 }: {
   strokes: [number, number, number, number][]
   marks: number[]
@@ -164,14 +166,16 @@ export function GlyphStrokes({
   y: number
   w: number
   h: number
+  large?: boolean
 }) {
+  const line = large ? s.glyphLineLarge : s.glyphLine
   return (
-    <g className="glyph">
+    <g>
       {strokes.map(([x0, y0, x1, y1], k) => (
-        <line key={k} x1={x + x0 * w} y1={y + y0 * h} x2={x + x1 * w} y2={y + y1 * h} />
+        <line key={k} className={line} x1={x + x0 * w} y1={y + y0 * h} x2={x + x1 * w} y2={y + y1 * h} />
       ))}
       {marks.map((m) => (
-        <line key={`m${m}`} className="mark" x1={x + (m + 0.3) * w} y1={y + 0.86 * h} x2={x + (m + 0.7) * w} y2={y + 0.86 * h} />
+        <line key={`m${m}`} className={line} x1={x + (m + 0.3) * w} y1={y + 0.86 * h} x2={x + (m + 0.7) * w} y2={y + 0.86 * h} />
       ))}
     </g>
   )
@@ -185,16 +189,16 @@ export function GlyphCard({ doc, symbolId }: { doc: PatternDoc; symbolId: string
   const h = 48
   return (
     <svg
-      className="glyph-large"
+      className={s.strip}
       width={sym.width * w + 4}
       height={h + 4}
       viewBox={`-2 -2 ${sym.width * w + 4} ${h + 4}`}
       aria-hidden="true"
     >
       {Array.from({ length: sym.width }, (_, i) => (
-        <rect key={i} className="cell" x={i * w} y={0} width={w} height={h} />
+        <rect key={i} className={s.glyphLargeCell} x={i * w} y={0} width={w} height={h} />
       ))}
-      <GlyphStrokes strokes={sym.strokes} marks={sym.marks ?? []} x={0} y={0} w={w} h={h} />
+      <GlyphStrokes strokes={sym.strokes} marks={sym.marks ?? []} x={0} y={0} w={w} h={h} large />
     </svg>
   )
 }

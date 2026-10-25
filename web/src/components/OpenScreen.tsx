@@ -3,6 +3,8 @@ import type { PreparedChart } from '../extractor'
 import { loadProgress, loadRecent, type RecentEntry } from '../state/storage'
 import type { PatternDoc } from '../types'
 import { ChartSetup } from './ChartSetup'
+import { buttonLike, errorText, muted, primary, visuallyHidden } from '../styles/ui.css'
+import * as s from './OpenScreen.css'
 
 interface Props {
   onOpen: (doc: PatternDoc) => void
@@ -67,10 +69,10 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
   }
 
   return (
-    <div className="open-screen">
+    <div>
       <h2>Open a chart</h2>
       <div
-        className={`drop-zone${dragging ? ' dragging' : ''}`}
+        className={dragging ? `${s.dropZone} ${s.dragging}` : s.dropZone}
         onDragOver={(e) => {
           e.preventDefault()
           setDragging(true)
@@ -80,31 +82,31 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
         data-testid="drop-zone"
       >
         <p>Drop a one-page chart PDF (or an extracted .json chart) here, or</p>
-        <label className="button primary">
+        <label className={`${buttonLike} ${primary}`}>
           Choose a file
           <input
             type="file"
             accept="application/pdf,.pdf,application/json,.json"
-            className="visually-hidden"
+            className={visuallyHidden}
             onChange={(e) => void readFile(e.target.files?.[0])}
             data-testid="file-input"
           />
         </label>
       </div>
       {busy && (
-        <p className="busy" role="status">
+        <p className={s.busy} role="status">
           {busy}
         </p>
       )}
       {error && (
-        <p className="error" role="alert">
+        <p className={errorText} role="alert">
           {error}
         </p>
       )}
       {recent.length > 0 && (
-        <section className="recent">
+        <section>
           <h3>Recent charts</h3>
-          <ul>
+          <ul className={s.recentList}>
             {recent.map((r) => {
               const p = loadProgress(r.patternHash, r.chartId)
               return (
@@ -112,7 +114,7 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
                   <button type="button" onClick={() => onOpenRecent(r)}>
                     {r.pattern}: {r.title}
                     {p && (
-                      <span className="recent-pos">
+                      <span className={muted}>
                         {' '}
                         (row {p.row}, group {p.groupIndex + 1})
                       </span>

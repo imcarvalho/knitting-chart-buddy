@@ -1,4 +1,5 @@
 import { createStore, del, get, set, type UseStore } from 'idb-keyval'
+import { DEFAULT_THEME, isThemeName, type ThemeName } from '../styles/themes'
 import type { PatternDoc } from '../types'
 
 /** Saved after every step. */
@@ -19,12 +20,12 @@ export interface RecentEntry {
 }
 
 export interface Settings {
-  theme: 'fairyfloss' | 'contrast'
+  theme: ThemeName
   largeText: boolean
   wakeLock: boolean
 }
 
-export const DEFAULT_SETTINGS: Settings = { theme: 'fairyfloss', largeText: false, wakeLock: true }
+export const DEFAULT_SETTINGS: Settings = { theme: DEFAULT_THEME, largeText: false, wakeLock: true }
 
 const PREFIX = 'kcb:'
 const MAX_RECENT = 8
@@ -58,8 +59,8 @@ export function saveProgress(p: Omit<Progress, 'updatedAt'>): void {
 
 export function loadSettings(): Settings {
   const saved = { ...DEFAULT_SETTINGS, ...readJson<Partial<Settings>>('settings') }
-  // Settings saved before fairyfloss became the only theme can still say auto, light or dark.
-  if (saved.theme !== 'contrast') saved.theme = 'fairyfloss'
+  // A theme that no longer exists (auto, light and dark were removed) falls back to the default.
+  if (!isThemeName(saved.theme)) saved.theme = DEFAULT_THEME
   return saved
 }
 

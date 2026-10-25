@@ -33,7 +33,7 @@ test('loads the back yoke JSON and steps through row 2', async ({ page }) => {
   await expect(card.getByText('FRONT', { exact: true })).toBeVisible()
 
   // Walk to the end of row 2: the next step lands on row 3.
-  const total = Number((await card.locator('.instruction-pos').textContent())!.match(/of (\d+)$/)![1])
+  const total = Number((await card.getByTestId('instruction-pos').textContent())!.match(/of (\d+)$/)![1])
   expect(total).toBe(15)
   for (let i = expected.length; i < total; i++) await page.keyboard.press('PageDown')
   await expect(page.getByTestId('next-preview')).toContainText('turn, then row 3')

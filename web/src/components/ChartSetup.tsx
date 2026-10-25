@@ -1,6 +1,8 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { slug, type PreparedChart } from '../extractor'
 import type { PatternDoc } from '../types'
+import { field, primary } from '../styles/ui.css'
+import * as s from './ChartSetup.css'
 
 interface Props {
   prepared: PreparedChart
@@ -24,14 +26,14 @@ export function ChartSetup({ prepared, onStart, onCancel }: Props) {
   }
 
   return (
-    <form className="chart-setup" onSubmit={submit} aria-labelledby="setup-title">
+    <form className={s.form} onSubmit={submit} aria-labelledby="setup-title">
       <h2 id="setup-title">Chart read</h2>
       <p>
         <strong>{prepared.fileName}</strong>: {chart.rows.length} rows, {chart.construction === 'flat' ? 'worked flat' : 'worked in the round'}
         , {cableTypes} cable type{cableTypes === 1 ? '' : 's'} recognised.
       </p>
       {warnings.length > 0 && (
-        <div className="setup-warnings" role="status">
+        <div className={s.warnings} role="status">
           <p>
             <strong>Check these {warnings.length} place(s) against the PDF:</strong>
           </p>
@@ -42,13 +44,13 @@ export function ChartSetup({ prepared, onStart, onCancel }: Props) {
           </ul>
         </div>
       )}
-      <label>
+      <label className={s.label}>
         Chart name
-        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input className={field} type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
       </label>
-      <label>
+      <label className={s.label}>
         Size
-        <select value={size} onChange={(e) => setSize(e.target.value)}>
+        <select className={field} value={size} onChange={(e) => setSize(e.target.value)}>
           <option value="">All rows</option>
           {prepared.sizes.map((s) => {
             const end = chart.sizeMarkers.find((m) => m.size === s && m.kind === 'end')
@@ -61,8 +63,8 @@ export function ChartSetup({ prepared, onStart, onCancel }: Props) {
           })}
         </select>
       </label>
-      <div className="setup-actions">
-        <button type="submit" className="primary">
+      <div className={s.actions}>
+        <button type="submit" className={primary}>
           Start knitting
         </button>
         <button type="button" onClick={onCancel}>

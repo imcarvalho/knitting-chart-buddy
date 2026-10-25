@@ -4,6 +4,8 @@ import { useNavigator, type NavAction } from '../state/navigator'
 import type { Chart, PatternDoc } from '../types'
 import { ChartStrip } from './ChartStrip'
 import { InstructionCard } from './InstructionCard'
+import { field, primary } from '../styles/ui.css'
+import * as s from './RowView.css'
 
 interface Props {
   doc: PatternDoc
@@ -102,35 +104,37 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
   const dirText = row.direction === 'rtl' ? 'right to left' : 'left to right'
 
   return (
-    <div className="row-view">
-      <header className="row-header">
-        <div className="row-title">
-          <h2>
+    <div>
+      <header className={s.header}>
+        <div>
+          <h2 className={s.title}>
             {chart.title}: row {row.number}
           </h2>
-          <p className="row-meta">
-            <span className={`side side-${row.side}`}>{row.side}</span>
+          <p className={s.meta}>
+            <span className={s.side}>{row.side}</span>
             {row.shortRow && (
-              <span className="short-row">
+              <span>
                 Short row: turn after column {row.shortRow.turnAfterCol}
               </span>
             )}
             {chart.size && (
-              <span className="size-range">
+              <span>
                 Size {chart.size.size}: rows {chart.size.startRow} to {chart.size.endRow}
               </span>
             )}
           </p>
         </div>
-        <div className="direction" aria-label={`Work ${dirText}`} role="img">
-          <span aria-hidden="true">{arrow}</span>
-          <small>{dirText}</small>
+        <div className={s.direction} aria-label={`Work ${dirText}`} role="img">
+          <span className={s.directionArrow} aria-hidden="true">
+            {arrow}
+          </span>
+          <small className={s.directionLabel}>{dirText}</small>
         </div>
       </header>
 
       <ChartStrip doc={doc} chart={chart} row={row} group={group} reducedMotion={reducedMotion} />
 
-      <div className="tap-area" onPointerDown={onPointerDown} onPointerUp={onPointerUp} data-testid="tap-area">
+      <div className={s.tapArea} onPointerDown={onPointerDown} onPointerUp={onPointerUp} data-testid="tap-area">
         <InstructionCard
           doc={doc}
           group={group}
@@ -140,8 +144,8 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
         />
       </div>
 
-      <div className="aside">
-        <p className="next-preview" data-testid="next-preview">
+      <div>
+        <p className={s.nextPreview} data-testid="next-preview">
           {next ? (
             <>
               Next: {next.newRow !== null && <strong>{turnText(row.shortRow)}row {next.newRow}: </strong>}
@@ -152,25 +156,25 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
           ) : null}
         </p>
         {chart.edgeNote && (
-          <p className="note edge-note">
+          <p className={s.note}>
             <strong>Plus edge stitches, not charted.</strong> {chart.edgeNote}
           </p>
         )}
         {repeat && (
-          <p className="note repeat-note">
+          <p className={s.note}>
             Inside the repeat bracket: work these columns {repeat.times} times in total.
           </p>
         )}
       </div>
 
-      <nav className="controls" aria-label="Chart navigation">
+      <nav className={s.controls} aria-label="Chart navigation">
         <button type="button" onClick={() => dispatch({ type: 'prevRow' })} disabled={row.number === rows[0]?.number}>
           Prev row
         </button>
-        <button type="button" className="big" onClick={() => dispatch({ type: 'prev' })}>
+        <button type="button" className={s.bigButton} onClick={() => dispatch({ type: 'prev' })}>
           Back
         </button>
-        <button type="button" className="big primary" onClick={() => dispatch({ type: 'next' })} disabled={atEnd}>
+        <button type="button" className={`${s.bigButton} ${primary}`} onClick={() => dispatch({ type: 'next' })} disabled={atEnd}>
           Next
         </button>
         <button
@@ -183,10 +187,11 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
         <button type="button" onClick={() => dispatch({ type: 'undo' })} disabled={!canUndo}>
           Undo
         </button>
-        <form className="jump" onSubmit={onJump}>
+        <form className={s.jump} onSubmit={onJump}>
           <label htmlFor="jump-row">Row</label>
           <input
             id="jump-row"
+            className={`${field} ${s.jumpInput}`}
             ref={jumpInput}
             type="number"
             inputMode="numeric"
@@ -205,7 +210,7 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
           <button type="submit">Go</button>
         </form>
       </nav>
-      <p className="hint">
+      <p className={s.hint}>
         Space, → or Page Down: next. Backspace, ← or Page Up: back. ↑ ↓: rows. g: go to row. u: undo.
       </p>
     </div>
