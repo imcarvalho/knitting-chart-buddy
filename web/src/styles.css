@@ -1,63 +1,24 @@
 :root {
-  --bg: #faf8fc;
-  --surface: #ffffff;
-  --text: #1d1a22;
-  --muted: #5f5868;
-  --border: #c9c2d3;
-  --accent: #5b3f8c;
-  --accent-text: #ffffff;
-  --cell-bg: #ffffff;
-  --cell-line: #8d859a;
-  --cell-none: #b9b5bf;
-  --ink: #111111;
-  --hl-bg: #ffe27a;
-  --hl-outline: #c2410c;
-  --front: #b42318;
-  --back: #1d4ed8;
-  --focus: #2563eb;
+  /* fairyfloss by sailorhg (https://github.com/sailorhg/fairyfloss). Palette colours are used as
+     is; the few derived shades (surface, muted, border, cell line) keep text at 4.5:1 or more and
+     controls and chart lines at 3:1 or more against their background. */
+  --bg: #5a5475;
+  --surface: #4a4463;
+  --text: #f8f8f2;
+  --muted: #e0daf2;
+  --border: #b8afdd;
+  --accent: #ffb8d1;
+  --accent-text: #3b3550;
+  --cell-bg: #4a4463;
+  --cell-line: #a99fd0;
+  --cell-none: #716799;
+  --ink: #f8f8f2;
+  --hl-bg: #8077a8;
+  --hl-outline: #fff352;
+  --front: #ffb8d1;
+  --back: #c2ffdf;
+  --focus: #c2ffdf;
   --base-size: 17px;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --bg: #17151b;
-    --surface: #221f28;
-    --text: #ece9f1;
-    --muted: #aaa3b5;
-    --border: #4a4453;
-    --accent: #b49ae6;
-    --accent-text: #17151b;
-    --cell-bg: #2b2732;
-    --cell-line: #6b6476;
-    --cell-none: #4d4855;
-    --ink: #f2f0f5;
-    --hl-bg: #6b5a12;
-    --hl-outline: #fb923c;
-    --front: #ff8a7a;
-    --back: #8ab4ff;
-    --focus: #93c5fd;
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme='dark'] {
-  --bg: #17151b;
-  --surface: #221f28;
-  --text: #ece9f1;
-  --muted: #aaa3b5;
-  --border: #4a4453;
-  --accent: #b49ae6;
-  --accent-text: #17151b;
-  --cell-bg: #2b2732;
-  --cell-line: #6b6476;
-  --cell-none: #4d4855;
-  --ink: #f2f0f5;
-  --hl-bg: #6b5a12;
-  --hl-outline: #fb923c;
-  --front: #ff8a7a;
-  --back: #8ab4ff;
-  --focus: #93c5fd;
   color-scheme: dark;
 }
 

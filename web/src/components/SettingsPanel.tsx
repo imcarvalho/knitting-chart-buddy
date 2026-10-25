@@ -17,9 +17,7 @@ export function SettingsPanel({ settings, onChange, wakeLockSupported, wakeLockA
           value={settings.theme}
           onChange={(e) => onChange({ ...settings, theme: e.target.value as Settings['theme'] })}
         >
-          <option value="auto">System</option>
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
+          <option value="fairyfloss">Fairyfloss</option>
           <option value="contrast">High contrast</option>
         </select>
       </label>

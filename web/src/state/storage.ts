@@ -19,12 +19,12 @@ export interface RecentEntry {
 }
 
 export interface Settings {
-  theme: 'auto' | 'light' | 'dark' | 'contrast'
+  theme: 'fairyfloss' | 'contrast'
   largeText: boolean
   wakeLock: boolean
 }
 
-export const DEFAULT_SETTINGS: Settings = { theme: 'auto', largeText: false, wakeLock: true }
+export const DEFAULT_SETTINGS: Settings = { theme: 'fairyfloss', largeText: false, wakeLock: true }
 
 const PREFIX = 'kcb:'
 const MAX_RECENT = 8
@@ -57,7 +57,10 @@ export function saveProgress(p: Omit<Progress, 'updatedAt'>): void {
 }
 
 export function loadSettings(): Settings {
-  return { ...DEFAULT_SETTINGS, ...readJson<Partial<Settings>>('settings') }
+  const saved = { ...DEFAULT_SETTINGS, ...readJson<Partial<Settings>>('settings') }
+  // Settings saved before fairyfloss became the only theme can still say auto, light or dark.
+  if (saved.theme !== 'contrast') saved.theme = 'fairyfloss'
+  return saved
 }
 
 export function saveSettings(s: Settings): void {

@@ -50,8 +50,8 @@ export default function App() {
 
   useEffect(() => {
     const root = document.documentElement
-    if (settings.theme === 'auto') root.removeAttribute('data-theme')
-    else root.setAttribute('data-theme', settings.theme)
+    if (settings.theme === 'contrast') root.setAttribute('data-theme', 'contrast')
+    else root.removeAttribute('data-theme')
     root.classList.toggle('large-text', settings.largeText)
     saveSettings(settings)
   }, [settings])
