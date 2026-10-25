@@ -1,5 +1,7 @@
 # Knitting Chart Buddy
 
+[![Deploy](https://github.com/imcarvalho/knitting-chart-buddy/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/imcarvalho/knitting-chart-buddy/actions/workflows/deploy.yml)
+
 Are you like me and keep getting lost in knitting charts / can't see the tiny graphs? 
 
 HERE'S AN APP FOR YOU! 
