@@ -10,7 +10,10 @@ HERE'S AN APP FOR YOU!
 
 
 Reads a knitting chart from a one-page vector PDF and walks the knitter through it one stitch group
-at a time. See [SPEC.md](SPEC.md).
+at a time. Pattern information and progress is stored locally on the browser.
+
+
+See [SPEC.md](SPEC.md).
 
 - `extractor/`: Python (PyMuPDF). PDF in, chart JSON out (`schema/chart.schema.json`).
 - `legend/chart-symbols.json`: symbol legend and glyph templates for the Shanon Sweater.
