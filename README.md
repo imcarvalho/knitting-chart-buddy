@@ -1,5 +1,9 @@
 # Knitting Chart Buddy
 
+Are you like me and keep getting lost in knitting charts / can't see the tiny graphs? 
+
+HERE'S AN APP FOR YOU! 
+
 Reads a knitting chart from a one-page vector PDF and walks the knitter through it one stitch group
 at a time. See [SPEC.md](SPEC.md).
 
