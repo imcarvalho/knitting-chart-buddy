@@ -10,5 +10,5 @@ web/test-results/
 web/playwright-report/
 *.tsbuildinfo
 fixtures/
-web/public/samples/
+web/tests/fixtures/
 web/public/pdfjs/

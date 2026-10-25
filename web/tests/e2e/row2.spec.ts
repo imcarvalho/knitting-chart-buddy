@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { fileURLToPath } from 'node:url'
 
-const SAMPLE = fileURLToPath(new URL('../../public/samples/back-yoke.json', import.meta.url))
+const SAMPLE = fileURLToPath(new URL('../fixtures/back-yoke.json', import.meta.url))
 
 test('loads the back yoke JSON and steps through row 2', async ({ page }) => {
   await page.goto('/')

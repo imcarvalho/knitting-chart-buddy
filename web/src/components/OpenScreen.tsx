@@ -4,8 +4,6 @@ import { loadProgress, loadRecent, type RecentEntry } from '../state/storage'
 import type { PatternDoc } from '../types'
 import { ChartSetup } from './ChartSetup'
 
-export const SAMPLE_URL = `${import.meta.env.BASE_URL}samples/back-yoke.json`
-
 interface Props {
   onOpen: (doc: PatternDoc) => void
   onOpenRecent: (entry: RecentEntry) => void
@@ -62,16 +60,6 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
     return <ChartSetup prepared={prepared} onStart={onOpen} onCancel={() => setPrepared(null)} />
   }
 
-  const openSample = async () => {
-    try {
-      const res = await fetch(SAMPLE_URL)
-      if (!res.ok) throw new Error('The sample chart is not bundled in this build. Run `pnpm sample` first.')
-      onOpen(parseDoc(await res.text()))
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-    }
-  }
-
   const onDrop = (e: DragEvent) => {
     e.preventDefault()
     setDragging(false)
@@ -103,11 +91,6 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
           />
         </label>
       </div>
-      <p>
-        <button type="button" onClick={() => void openSample()}>
-          Open the sample: Shanon Sweater, back yoke
-        </button>
-      </p>
       {busy && (
         <p className="busy" role="status">
           {busy}

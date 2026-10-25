@@ -15,7 +15,11 @@ function copyPdfjsAssets() {
   return { name: 'copy-pdfjs-assets' }
 }
 
+// GitHub Pages serves the app from /<repo>/. The deploy workflow sets BASE_PATH; locally it is /.
+const base = process.env.BASE_PATH ?? '/'
+
 export default defineConfig({
+  base,
   server: { fs: { allow: ['..'] } },
   plugins: [
     copyPdfjsAssets(),
@@ -30,6 +34,8 @@ export default defineConfig({
         theme_color: '#5b3f8c',
         background_color: '#faf8fc',
         display: 'standalone',
+        start_url: base,
+        scope: base,
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },

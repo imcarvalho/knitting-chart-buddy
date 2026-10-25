@@ -11,11 +11,13 @@ at a time. See [SPEC.md](SPEC.md).
 
 ## Pattern files are not in the repository
 
-The chart PDFs (`fixtures/`) and the chart JSON extracted from them (`web/public/samples/`) are
+The chart PDFs (`fixtures/`) and the chart JSON extracted from them (`web/tests/fixtures/`) are
 copyrighted pattern content and are git-ignored. Put your own copies in `fixtures/`.
 
-The extractor tests and `pnpm sample` need the back yoke PDF. `pnpm test` and `pnpm e2e` generate
-the sample JSON from it when it is missing.
+The sample JSON is only used by the tests. It lives under `web/tests/`, not `web/public/`, so it
+never ends up in a build, and the app has no bundled sample. The extractor tests and `pnpm sample`
+need the back yoke PDF. `pnpm test` and `pnpm e2e` generate the sample JSON from it when it is
+missing.
 
 ## Extract a chart
 
@@ -30,16 +32,41 @@ uv run python -m chart_buddy.cli show ../out/back.json --row 2
 
 ```sh
 cd web && pnpm install
-pnpm sample   # generate public/samples/back-yoke.json from the fixture PDF
 pnpm dev
 ```
 
 Drop or pick a one-page chart PDF: the app reads it on the device, asks for the chart name and
 size, and starts at row 1. The extracted chart and your position are saved on the device (chart in
-IndexedDB, position in localStorage), so it reopens where you left off. Extracted .json files and
-the bundled sample open too. Keys: Space / → / Page Down next group,
+IndexedDB, position in localStorage), so it reopens where you left off. Extracted .json files open
+too. Keys: Space / → / Page Down next group,
 Backspace / ← / Page Up back, ↓ / ↑ next / previous row, `g` then a number to jump, `u` undo.
 Touch: tap the right / left half of the instruction card, swipe up / down for rows.
+
+## Deploy (GitHub Pages)
+
+`.github/workflows/deploy.yml` builds `web/` and publishes it on every push to `main` (or by hand
+from the Actions tab). The app is then at `https://<user>.github.io/knitting-chart-buddy/`.
+
+One-time setup: in the repository on GitHub, go to Settings, Pages, and set Source to
+"GitHub Actions".
+
+How it works:
+
+- Pages serves the app from `/<repo>/`, so the workflow sets `BASE_PATH=/<repo>/` for the build.
+  `vite.config.ts` uses it as Vite's `base` and as the PWA's `start_url` and `scope`. Without
+  `BASE_PATH` the base is `/`, which is what `pnpm dev`, `pnpm preview` and the e2e test use.
+- `pnpm build` type-checks only the shipped code (`tsconfig.app.json`), because the tests need the
+  git-ignored sample and a clean checkout does not have it. `pnpm typecheck` still checks
+  everything locally.
+- The workflow fails if a PDF or a sample chart ends up in `dist/`.
+- The app keeps working offline after the first visit. After a deploy it updates itself on the
+  next load.
+
+To try the Pages build locally:
+
+```sh
+cd web && BASE_PATH=/knitting-chart-buddy/ pnpm build && pnpm preview --base /knitting-chart-buddy/
+```
 
 ## Keeping the two extractors in step
 
@@ -52,5 +79,5 @@ JSON for the fixture, so change both together.
 
 ```sh
 cd extractor && uv run pytest
-cd web && pnpm test && pnpm e2e
+cd web && pnpm typecheck && pnpm test && pnpm e2e
 ```

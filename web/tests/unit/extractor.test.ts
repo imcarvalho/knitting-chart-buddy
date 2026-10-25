@@ -11,7 +11,7 @@ import type { PatternDoc } from '../../src/types'
 
 const path = (p: string) => fileURLToPath(new URL(p, import.meta.url))
 const FIXTURE = path('../../../fixtures/Shanon_Sweater_tamanho3-back.pdf')
-const PYTHON_OUTPUT = path('../../public/samples/back-yoke.json')
+const PYTHON_OUTPUT = path('../fixtures/back-yoke.json')
 const PDFJS = path('../../node_modules/pdfjs-dist/')
 const options = { cMapUrl: `${PDFJS}cmaps/`, standardFontDataUrl: `${PDFJS}standard_fonts/` }
 

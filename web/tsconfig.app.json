@@ -1,0 +1,6 @@
+{
+  // Type-checks only what ships. The full tsconfig.json also covers the tests, which need the
+  // git-ignored sample chart (tests/fixtures/), so it cannot run on a clean checkout.
+  "extends": "./tsconfig.json",
+  "include": ["src", "vite.config.ts"]
+}

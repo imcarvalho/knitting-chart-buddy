@@ -1,5 +1,5 @@
 import type { PatternDoc } from '../../src/types'
-import data from '../../public/samples/back-yoke.json'
+import data from '../fixtures/back-yoke.json'
 
 /** The back yoke extracted from the fixture PDF. */
 export const sample = data as unknown as PatternDoc
