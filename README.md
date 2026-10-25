@@ -6,6 +6,9 @@ Are you like me and keep getting lost in knitting charts / can't see the tiny gr
 
 HERE'S AN APP FOR YOU! 
 
+<img width="2224" height="1724" alt="CleanShot 2026-10-25 at 19 02 51@2x" src="https://github.com/user-attachments/assets/252c4e2d-2889-4751-990a-a5d52f4ee587" />
+
+
 Reads a knitting chart from a one-page vector PDF and walks the knitter through it one stitch group
 at a time. See [SPEC.md](SPEC.md).
 
