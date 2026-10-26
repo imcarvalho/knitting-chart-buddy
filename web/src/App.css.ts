@@ -27,4 +27,17 @@ export const title = style({
   color: vars.color.accent,
 })
 
+export const badge = style({
+  marginLeft: 4,
+  color: vars.color.highlightOutline,
+  padding: '0.1em 0.5em',
+  border: '2px solid currentColor',
+  borderRadius: 6,
+  fontSize: '0.7em',
+  fontWeight: 700,
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  verticalAlign: 'middle',
+})
+
 export const actions = style({ display: 'flex', gap: 8 })

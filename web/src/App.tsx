@@ -82,7 +82,9 @@ export default function App() {
   return (
     <div className={s.app}>
       <header className={s.header}>
-        <h1 className={s.title}>Knitting Chart Buddy</h1>
+        <h1 className={s.title}>
+          <span aria-hidden="true">🧶</span> Knitting Chart Buddy <span className={s.badge}>Beta</span>
+        </h1>
         <div className={s.actions}>
           {open && (
             <button type="button" onClick={closeChart}>
