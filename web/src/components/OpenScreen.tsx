@@ -3,6 +3,7 @@ import type { PreparedChart } from '../extractor'
 import { loadProgress, loadRecent, type RecentEntry } from '../state/storage'
 import type { PatternDoc } from '../types'
 import { ChartSetup } from './ChartSetup'
+import { HowTo } from './HowTo'
 import { buttonLike, errorText, muted, primary, visuallyHidden } from '../styles/ui.css'
 import * as s from './OpenScreen.css'
 
@@ -126,6 +127,7 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
           </ul>
         </section>
       )}
+      <HowTo />
     </div>
   )
 }

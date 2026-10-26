@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { Footer } from './components/Footer'
+import { HowTo } from './components/HowTo'
 import { OpenScreen } from './components/OpenScreen'
 import { RowView } from './components/RowView'
 import { SettingsPanel } from './components/SettingsPanel'
@@ -32,6 +34,7 @@ export default function App() {
   const [restoring, setRestoring] = useState(true)
   const [settings, setSettings] = useState<Settings>(loadSettings)
   const [showSettings, setShowSettings] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
   const reducedMotion = usePrefersReducedMotion()
   const wakeLockActive = useWakeLock(open !== null && settings.wakeLock)
 
@@ -79,6 +82,11 @@ export default function App() {
               Charts
             </button>
           )}
+          {open && (
+            <button type="button" aria-expanded={showHelp} onClick={() => setShowHelp((h) => !h)}>
+              Help
+            </button>
+          )}
           <button type="button" aria-expanded={showSettings} onClick={() => setShowSettings((s) => !s)}>
             Settings
           </button>
@@ -92,6 +100,7 @@ export default function App() {
           wakeLockActive={wakeLockActive}
         />
       )}
+      {open && showHelp && <HowTo />}
       <main>
         {open && chart ? (
           <RowView
@@ -105,6 +114,7 @@ export default function App() {
           <OpenScreen onOpen={(d) => openDoc(d)} onOpenRecent={(e) => void openRecent(e)} />
         )}
       </main>
+      <Footer />
     </div>
   )
 }
