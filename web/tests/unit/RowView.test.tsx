@@ -29,13 +29,17 @@ describe('RowView', () => {
     renderView()
     const announcer = screen.getByTestId('announcer')
     expect(announcer).toHaveAttribute('aria-live', 'polite')
-    expect(announcer).toHaveTextContent('Row 1, wrong side, left to right. Purl 2. Group 1 of 11.')
+    expect(announcer).toHaveTextContent(
+      'Row 1, wrong side, left to right. Short row: 30 stitches, then turn. Purl 2. Group 1 of 11.',
+    )
     // The card itself is not live: it would read everything again on every step.
     expect(instruction()).not.toHaveAttribute('aria-live')
     await user.keyboard(' ')
     expect(announcer).toHaveTextContent(/^Knit 2\. Group 2 of 11\.$/)
     await user.keyboard('{ArrowDown}')
-    expect(announcer).toHaveTextContent('Row 2, right side, right to left. Work the double stitch. Group 1 of 15.')
+    expect(announcer).toHaveTextContent(
+      'Row 2, right side, right to left. Short row: 32 stitches, then turn. Work the double stitch. Group 1 of 15.',
+    )
   })
 
   it('makes two identical groups in a row sound different', async () => {
@@ -78,7 +82,7 @@ describe('RowView', () => {
   it('highlights the current group in the strip', () => {
     renderView()
     expect(screen.getByTestId('highlight')).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: /current group on columns 30, 29/ })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /current group on columns 29 to 30/ })).toBeInTheDocument()
   })
 
   it('steps with the keyboard: Space, arrows, Page Up/Down, Backspace', async () => {
@@ -165,6 +169,29 @@ describe('RowView', () => {
     renderView()
     await user.keyboard('   ')
     expect(loadProgress(HASH, chart.id)).toMatchObject({ row: 1, groupIndex: 3 })
+  })
+
+  it('gives short rows as a stitch count, never a column number the PDF does not show', () => {
+    saveProgress({ patternHash: HASH, chartId: chart.id, row: 17, groupIndex: 0 })
+    renderView()
+    expect(screen.getByText(/^Short row:/, { selector: 'span' })).toHaveTextContent('Short row: 62 stitches, then turn')
+    expect(screen.getByTestId('announcer')).toHaveTextContent('Short row: 62 stitches, then turn.')
+    expect(screen.queryByText(/-15/)).not.toBeInTheDocument()
+    // Column labels stop at 1: the unnumbered columns on the right have none.
+    const labels = [...document.querySelectorAll('svg text')].map((t) => t.textContent)
+    expect(labels).toContain('1')
+    expect(labels).not.toContain('0')
+    expect(labels.some((t) => t?.startsWith('-'))).toBe(false)
+  })
+
+  it('names unnumbered columns by their distance from column 1', async () => {
+    const user = userEvent.setup()
+    saveProgress({ patternHash: HASH, chartId: chart.id, row: 17, groupIndex: 0 })
+    renderView()
+    // Row 17 ends on the right, past column 1: walk to its last group.
+    const total = chart.rows.find((r) => r.number === 17)!.groups.length
+    for (let i = 1; i < total; i++) await user.keyboard(' ')
+    expect(screen.getByRole('img', { name: /current group on 16 columns right of column 1/ })).toBeInTheDocument()
   })
 
   it('shows the edge note and the size range', () => {

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   clampPosition,
   currentGroup,
+  describeColumns,
   firstPosition,
   isLastPosition,
   jumpToRow,
@@ -63,5 +64,19 @@ describe('navigation', () => {
     expect(upcoming(chart, { row: 1, group: 0 })).toEqual({ group: row(1).groups[1], newRow: null })
     const last = row(1).groups.length - 1
     expect(upcoming(chart, { row: 1, group: last })?.newRow).toBe(2)
+  })
+})
+
+describe('describeColumns', () => {
+  it('names numbered columns by their number', () => {
+    expect(describeColumns([9, 10, 11])).toBe('columns 9 to 11')
+    expect(describeColumns([4])).toBe('column 4')
+  })
+  it('names columns right of column 1 by their distance from it', () => {
+    expect(describeColumns([0])).toBe('1 column right of column 1')
+    expect(describeColumns([-9, -14, -10])).toBe('10 to 15 columns right of column 1')
+  })
+  it('handles a group that crosses column 1', () => {
+    expect(describeColumns([1, 0])).toBe('column 1 and 1 column to its right')
   })
 })

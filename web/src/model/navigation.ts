@@ -108,3 +108,31 @@ export function repeatFor(chart: Chart, group: Group): Repeat | undefined {
 export function patternHash(doc: PatternDoc): string {
   return doc.source.sha256
 }
+
+/** Stitches worked in a row: every cell except the ones with no stitch (outside a short row). */
+export function workedStitches(row: Row): number {
+  return row.cells.filter((c) => c.symbol !== 'none').length
+}
+
+/**
+ * The PDF numbers only some columns. The extractor keeps counting past them, so the columns to the
+ * right of column 1 get 0, -1, -2... Those numbers mean nothing to a knitter: they are not shown.
+ */
+export function isNumberedColumn(col: number): boolean {
+  return col >= 1
+}
+
+/** Columns of a group, in words, for screen readers. */
+export function describeColumns(cols: number[]): string {
+  const lo = Math.min(...cols)
+  const hi = Math.max(...cols)
+  if (isNumberedColumn(lo)) return lo === hi ? `column ${lo}` : `columns ${lo} to ${hi}`
+  // 0 is the first column right of column 1, -1 the second, and so on.
+  const far = 1 - lo
+  const plural = (n: number) => (n === 1 ? 'column' : 'columns')
+  if (!isNumberedColumn(hi)) {
+    const near = 1 - hi
+    return near === far ? `${near} ${plural(near)} right of column 1` : `${near} to ${far} columns right of column 1`
+  }
+  return `column ${hi} and ${far} ${plural(far)} to its right`
+}

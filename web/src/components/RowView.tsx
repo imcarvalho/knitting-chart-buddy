@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type PointerEvent } from 'react'
-import { currentGroup, isLastPosition, repeatFor, rowByNumber, upcoming, workedRows } from '../model/navigation'
+import { currentGroup, isLastPosition, repeatFor, rowByNumber, upcoming, workedRows, workedStitches } from '../model/navigation'
 import { useNavigator, type NavAction } from '../state/navigator'
 import type { Chart, PatternDoc } from '../types'
 import { ChartStrip } from './ChartStrip'
@@ -52,7 +52,8 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
     lastRow.current = row.number
     const what = group ? `${group.text}. Group ${pos.group + 1} of ${row.groups.length}.` : 'Nothing to work on this row.'
     const dir = row.direction === 'rtl' ? 'right to left' : 'left to right'
-    setAnnouncement(rowChanged ? `Row ${row.number}, ${sideName(row.side)}, ${dir}. ${what}` : what)
+    const short = row.shortRow ? ` Short row: ${workedStitches(row)} stitches, then turn.` : ''
+    setAnnouncement(rowChanged ? `Row ${row.number}, ${sideName(row.side)}, ${dir}.${short} ${what}` : what)
   }, [row, group, pos.group])
 
   useEffect(() => {
@@ -144,7 +145,7 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
             <span className={visuallyHidden}>{sideName(row.side)}.</span>
             {row.shortRow && (
               <span>
-                Short row: turn after column {row.shortRow.turnAfterCol}
+                Short row: {workedStitches(row)} stitches, then turn
                 <span className={visuallyHidden}>.</span>
               </span>
             )}

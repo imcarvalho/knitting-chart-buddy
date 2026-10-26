@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { Cell, Chart, Group, PatternDoc, Row } from '../types'
-import { rowByNumber } from '../model/navigation'
+import { describeColumns, isNumberedColumn, rowByNumber } from '../model/navigation'
 import * as s from './ChartStrip.css'
 
 const CW = 26 // cell width
@@ -43,7 +43,7 @@ export function ChartStrip({ doc, chart, row, group, reducedMotion }: Props) {
     }
   }, [hl?.x0, hl?.x1, reducedMotion])
 
-  const label = `Row ${row.number}${group ? `, current group on column${group.cols.length > 1 ? 's' : ''} ${group.cols.join(', ')}` : ''}`
+  const label = `Row ${row.number}${group ? `, current group on ${describeColumns(group.cols)}` : ''}`
 
   return (
     <div
@@ -85,11 +85,13 @@ export function ChartStrip({ doc, chart, row, group, reducedMotion }: Props) {
           />
         )}
         {below && <RowCells doc={doc} row={below} y={yBelow} h={CH_CONTEXT} context />}
-        {cols.map((c, i) => (
-          <text key={c} className={s.colNum} x={i * CW + CW / 2} y={yNums + NUM_H - 4} textAnchor="middle">
-            {c}
-          </text>
-        ))}
+        {cols.map((c, i) =>
+          isNumberedColumn(c) ? (
+            <text key={c} className={s.colNum} x={i * CW + CW / 2} y={yNums + NUM_H - 4} textAnchor="middle">
+              {c}
+            </text>
+          ) : null,
+        )}
         {chart.repeats.map((r, k) => {
           const box = highlightBox(cols, [r.fromCol, r.toCol])
           if (!box) return null
