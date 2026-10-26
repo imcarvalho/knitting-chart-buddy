@@ -4,7 +4,7 @@ import { useNavigator, type NavAction } from '../state/navigator'
 import type { Chart, PatternDoc } from '../types'
 import { ChartStrip } from './ChartStrip'
 import { InstructionCard } from './InstructionCard'
-import { field, primary } from '../styles/ui.css'
+import { field, primary, visuallyHidden } from '../styles/ui.css'
 import * as s from './RowView.css'
 
 interface Props {
@@ -15,6 +15,14 @@ interface Props {
 }
 
 const SWIPE_MIN = 60
+const APP_TITLE = 'Knitting Chart Buddy'
+
+const sideName = (side: string) => (side === 'RS' ? 'right side' : side === 'WS' ? 'wrong side' : side)
+
+/** Space activates a focused control natively: the shortcut must not take it over. */
+function isInteractive(t: EventTarget | null): boolean {
+  return t instanceof Element && t.closest('button, a[href], summary, [role="button"], [role="link"]') !== null
+}
 
 export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
   const { pos, canUndo, dispatch } = useNavigator(chart, patternHash)
@@ -27,6 +35,32 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
 
   const jumpInput = useRef<HTMLInputElement>(null)
   const [jumpValue, setJumpValue] = useState('')
+  const headingRef = useRef<HTMLHeadingElement>(null)
+
+  // Opening a chart moves focus to its heading, so screen readers start from the chart.
+  useEffect(() => {
+    headingRef.current?.focus()
+  }, [])
+
+  // What a screen reader hears after each step: the group, plus the row, side and direction when
+  // the row changes. The group position makes two identical groups in a row ("Purl 2") distinct.
+  const lastRow = useRef<number | null>(null)
+  const [announcement, setAnnouncement] = useState('')
+  useEffect(() => {
+    if (!row) return
+    const rowChanged = lastRow.current !== row.number
+    lastRow.current = row.number
+    const what = group ? `${group.text}. Group ${pos.group + 1} of ${row.groups.length}.` : 'Nothing to work on this row.'
+    const dir = row.direction === 'rtl' ? 'right to left' : 'left to right'
+    setAnnouncement(rowChanged ? `Row ${row.number}, ${sideName(row.side)}, ${dir}. ${what}` : what)
+  }, [row, group, pos.group])
+
+  useEffect(() => {
+    document.title = `${chart.title}, row ${pos.row} - ${APP_TITLE}`
+    return () => {
+      document.title = APP_TITLE
+    }
+  }, [chart.title, pos.row])
 
   useEffect(() => {
     const keys: Record<string, NavAction> = {
@@ -46,6 +80,7 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
       t instanceof HTMLTextAreaElement
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.altKey || e.ctrlKey || e.metaKey || typing(e.target)) return
+      if (e.key === ' ' && isInteractive(e.target)) return
       if (e.key === 'g') {
         e.preventDefault()
         jumpInput.current?.focus()
@@ -57,16 +92,8 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
       e.preventDefault() // no page scroll, no button activation from Space
       dispatch(action)
     }
-    // A focused button would also "click" on Space keyup: swallow it, the keydown already acted.
-    const onKeyUp = (e: KeyboardEvent) => {
-      if (e.key === ' ' && e.target instanceof HTMLButtonElement) e.preventDefault()
-    }
     window.addEventListener('keydown', onKeyDown)
-    window.addEventListener('keyup', onKeyUp)
-    return () => {
-      window.removeEventListener('keydown', onKeyDown)
-      window.removeEventListener('keyup', onKeyUp)
-    }
+    return () => window.removeEventListener('keydown', onKeyDown)
   }, [dispatch])
 
   // Touch: tap the left/right half of the card area; swipe up/down for rows.
@@ -107,19 +134,24 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
     <div>
       <header className={s.header}>
         <div>
-          <h2 className={s.title}>
+          <h2 className={s.title} ref={headingRef} tabIndex={-1}>
             {chart.title}: row {row.number}
           </h2>
           <p className={s.meta}>
-            <span className={s.side}>{row.side}</span>
+            <span className={s.side} aria-hidden="true">
+              {row.side}
+            </span>
+            <span className={visuallyHidden}>{sideName(row.side)}.</span>
             {row.shortRow && (
               <span>
                 Short row: turn after column {row.shortRow.turnAfterCol}
+                <span className={visuallyHidden}>.</span>
               </span>
             )}
             {chart.size && (
               <span>
                 Size {chart.size.size}: rows {chart.size.startRow} to {chart.size.endRow}
+                <span className={visuallyHidden}>.</span>
               </span>
             )}
           </p>
@@ -131,6 +163,10 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
           <small className={s.directionLabel}>{dirText}</small>
         </div>
       </header>
+
+      <p className={visuallyHidden} aria-live="polite" aria-atomic="true" data-testid="announcer">
+        {announcement}
+      </p>
 
       <ChartStrip doc={doc} chart={chart} row={row} group={group} reducedMotion={reducedMotion} />
 
@@ -171,10 +207,16 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
         <button type="button" onClick={() => dispatch({ type: 'prevRow' })} disabled={row.number === rows[0]?.number}>
           Prev row
         </button>
-        <button type="button" className={s.bigButton} onClick={() => dispatch({ type: 'prev' })}>
+        <button type="button" className={s.bigButton} aria-label="Back one group" onClick={() => dispatch({ type: 'prev' })}>
           Back
         </button>
-        <button type="button" className={`${s.bigButton} ${primary}`} onClick={() => dispatch({ type: 'next' })} disabled={atEnd}>
+        <button
+          type="button"
+          className={`${s.bigButton} ${primary}`}
+          aria-label="Next group"
+          onClick={() => dispatch({ type: 'next' })}
+          disabled={atEnd}
+        >
           Next
         </button>
         <button

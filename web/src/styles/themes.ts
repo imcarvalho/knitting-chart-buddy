@@ -43,7 +43,7 @@ export const themes = {
       cellLine: ff.dusk,
       cellNone: ff.heather,
       ink: ff.cream,
-      highlightBg: ff.wisteria,
+      highlightBg: ff.iris,
       highlightOutline: ff.lemon,
       front: ff.candyPink,
       back: ff.mint,

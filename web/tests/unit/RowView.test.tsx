@@ -24,9 +24,55 @@ describe('RowView', () => {
     expect(screen.getByTestId('next-preview')).toHaveTextContent('Next: Knit 2')
   })
 
-  it('announces the current group through a polite live region', () => {
+  it('announces each step through a short polite live region, with the row when it changes', async () => {
+    const user = userEvent.setup()
     renderView()
-    expect(instruction()).toHaveAttribute('aria-live', 'polite')
+    const announcer = screen.getByTestId('announcer')
+    expect(announcer).toHaveAttribute('aria-live', 'polite')
+    expect(announcer).toHaveTextContent('Row 1, wrong side, left to right. Purl 2. Group 1 of 11.')
+    // The card itself is not live: it would read everything again on every step.
+    expect(instruction()).not.toHaveAttribute('aria-live')
+    await user.keyboard(' ')
+    expect(announcer).toHaveTextContent(/^Knit 2\. Group 2 of 11\.$/)
+    await user.keyboard('{ArrowDown}')
+    expect(announcer).toHaveTextContent('Row 2, right side, right to left. Work the double stitch. Group 1 of 15.')
+  })
+
+  it('makes two identical groups in a row sound different', async () => {
+    const user = userEvent.setup()
+    saveProgress({ patternHash: HASH, chartId: chart.id, row: 2, groupIndex: 2 })
+    renderView()
+    const announcer = screen.getByTestId('announcer')
+    await user.keyboard(' ')
+    const first = announcer.textContent
+    await user.keyboard(' ')
+    expect(announcer.textContent).not.toBe(first)
+  })
+
+  it('moves focus to the row heading when a chart opens', () => {
+    renderView()
+    expect(heading()).toHaveFocus()
+  })
+
+  it('lets Space activate a focused button instead of stepping', async () => {
+    const user = userEvent.setup()
+    renderView()
+    await user.keyboard('{ArrowDown}{ArrowDown}')
+    expect(heading()).toHaveTextContent('row 3')
+    screen.getByRole('button', { name: 'Undo' }).focus()
+    await user.keyboard(' ')
+    expect(heading()).toHaveTextContent('row 2')
+    expect(instruction()).toHaveTextContent('Row 2, group 1 of')
+  })
+
+  it('names the controls and the chart for screen readers', () => {
+    renderView()
+    expect(screen.getByRole('button', { name: 'Back one group' })).toHaveTextContent('Back')
+    expect(screen.getByRole('button', { name: 'Next group' })).toHaveTextContent('Next')
+    const region = screen.getByRole('region', { name: /^Chart/ })
+    expect(region).toHaveAttribute('tabindex', '0')
+    expect(screen.getByText('wrong side.')).toBeInTheDocument()
+    expect(document.title).toBe('Back yoke, row 1 - Knitting Chart Buddy')
   })
 
   it('highlights the current group in the strip', () => {
@@ -71,7 +117,10 @@ describe('RowView', () => {
     expect(card.getByText('BACK')).toBeInTheDocument()
     expect(card.getByText(/on cable needle/)).toHaveTextContent('1 st on cable needle')
     expect(card.getByText('Slip 1 st to cable needle, hold at the BACK, knit 2, purl 1 from cable needle')).toBeInTheDocument()
-    expect(card.getAllByRole('listitem').map((li) => li.textContent)).toEqual(['sl1 to cn, BACK', 'k2', 'p1 from cn'])
+    // The short form is visible but hidden from screen readers, which read the full sentence.
+    const steps = card.getAllByRole('listitem', { hidden: true })
+    expect(steps.map((li) => li.textContent)).toEqual(['sl1 to cn, BACK', 'k2', 'p1 from cn'])
+    expect(steps[0].closest('ol')).toHaveAttribute('aria-hidden', 'true')
 
     await user.keyboard(' ')
     expect(card.getByText('FRONT')).toBeInTheDocument()

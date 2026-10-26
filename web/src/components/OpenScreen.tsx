@@ -1,4 +1,4 @@
-import { useState, type DragEvent } from 'react'
+import { useEffect, useRef, useState, type DragEvent } from 'react'
 import type { PreparedChart } from '../extractor'
 import { loadProgress, loadRecent, type RecentEntry } from '../state/storage'
 import type { PatternDoc } from '../types'
@@ -10,6 +10,8 @@ import * as s from './OpenScreen.css'
 interface Props {
   onOpen: (doc: PatternDoc) => void
   onOpenRecent: (entry: RecentEntry) => void
+  /** Move focus to the heading: true when the user came back here, not on first load. */
+  focusHeading?: boolean
 }
 
 /** Checks the shape of an extracted chart file enough to show a clear error instead of a crash. */
@@ -33,12 +35,17 @@ export function parseDoc(text: string): PatternDoc {
   return d as PatternDoc
 }
 
-export function OpenScreen({ onOpen, onOpenRecent }: Props) {
+export function OpenScreen({ onOpen, onOpenRecent, focusHeading = false }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
   const [busy, setBusy] = useState<string | null>(null)
   const [prepared, setPrepared] = useState<PreparedChart | null>(null)
   const recent = loadRecent()
+  const headingRef = useRef<HTMLHeadingElement>(null)
+
+  useEffect(() => {
+    if (focusHeading && !prepared) headingRef.current?.focus()
+  }, [focusHeading, prepared])
 
   const readFile = async (file: File | undefined) => {
     if (!file) return
@@ -71,7 +78,9 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
 
   return (
     <div>
-      <h2>Open a chart</h2>
+      <h2 ref={headingRef} tabIndex={-1}>
+        Open a chart
+      </h2>
       <div
         className={dragging ? `${s.dropZone} ${s.dragging}` : s.dropZone}
         onDragOver={(e) => {
@@ -94,16 +103,13 @@ export function OpenScreen({ onOpen, onOpenRecent }: Props) {
           />
         </label>
       </div>
-      {busy && (
-        <p className={s.busy} role="status">
-          {busy}
-        </p>
-      )}
-      {error && (
-        <p className={errorText} role="alert">
-          {error}
-        </p>
-      )}
+      {/* Always rendered, so screen readers announce the text when it appears. */}
+      <p className={`${s.busy} ${s.live}`} role="status">
+        {busy}
+      </p>
+      <p className={`${errorText} ${s.live}`} role="alert">
+        {error}
+      </p>
       {recent.length > 0 && (
         <section>
           <h3>Recent charts</h3>

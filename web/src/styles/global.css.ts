@@ -28,10 +28,17 @@ globalStyle('button', buttonBase)
 
 globalStyle('button:disabled', { opacity: 0.45, cursor: 'default' })
 
+// The row field shows the current row as its placeholder: keep it readable.
+globalStyle('::placeholder', { color: vars.color.muted, opacity: 1 })
+
 globalStyle(':focus-visible', {
   outline: `3px solid ${vars.color.focus}`,
   outlineOffset: 2,
 })
+
+// Headings get focus from code when the view changes (tabindex -1), never from the keyboard:
+// no focus ring there.
+globalStyle('[tabindex="-1"]:focus', { outline: 'none' })
 
 globalStyle('*', {
   '@media': {

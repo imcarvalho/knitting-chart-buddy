@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Footer } from './components/Footer'
 import { HowTo } from './components/HowTo'
 import { OpenScreen } from './components/OpenScreen'
@@ -35,6 +35,8 @@ export default function App() {
   const [settings, setSettings] = useState<Settings>(loadSettings)
   const [showSettings, setShowSettings] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
+  // Set once the user moves between views, so focus follows them (but not on the first load).
+  const navigated = useRef(false)
   const reducedMotion = usePrefersReducedMotion()
   const wakeLockActive = useWakeLock(open !== null && settings.wakeLock)
 
@@ -59,6 +61,11 @@ export default function App() {
     saveSettings(settings)
   }, [settings])
 
+  const closeChart = () => {
+    navigated.current = true
+    setOpen(null)
+  }
+
   const openDoc = (doc: PatternDoc, chartId?: string) => {
     const id = chartId ?? doc.charts[0].id
     setOpen({ doc, chartId: id })
@@ -78,29 +85,41 @@ export default function App() {
         <h1 className={s.title}>Knitting Chart Buddy</h1>
         <div className={s.actions}>
           {open && (
-            <button type="button" onClick={() => setOpen(null)}>
+            <button type="button" onClick={closeChart}>
               Charts
             </button>
           )}
           {open && (
-            <button type="button" aria-expanded={showHelp} onClick={() => setShowHelp((h) => !h)}>
+            <button
+              type="button"
+              aria-expanded={showHelp}
+              aria-controls={showHelp ? 'help-panel' : undefined}
+              onClick={() => setShowHelp((h) => !h)}
+            >
               Help
             </button>
           )}
-          <button type="button" aria-expanded={showSettings} onClick={() => setShowSettings((s) => !s)}>
+          <button
+            type="button"
+            aria-expanded={showSettings}
+            aria-controls={showSettings ? 'settings-panel' : undefined}
+            onClick={() => setShowSettings((s) => !s)}
+          >
             Settings
           </button>
         </div>
       </header>
       {showSettings && (
-        <SettingsPanel
-          settings={settings}
-          onChange={setSettings}
-          wakeLockSupported={wakeLockSupported()}
-          wakeLockActive={wakeLockActive}
-        />
+        <section id="settings-panel" aria-label="Settings">
+          <SettingsPanel
+            settings={settings}
+            onChange={setSettings}
+            wakeLockSupported={wakeLockSupported()}
+            wakeLockActive={wakeLockActive}
+          />
+        </section>
       )}
-      {open && showHelp && <HowTo />}
+      {open && showHelp && <HowTo id="help-panel" />}
       <main>
         {open && chart ? (
           <RowView
@@ -111,7 +130,11 @@ export default function App() {
             reducedMotion={reducedMotion}
           />
         ) : restoring ? null : (
-          <OpenScreen onOpen={(d) => openDoc(d)} onOpenRecent={(e) => void openRecent(e)} />
+          <OpenScreen
+            onOpen={(d) => openDoc(d)}
+            onOpenRecent={(e) => void openRecent(e)}
+            focusHeading={navigated.current}
+          />
         )}
       </main>
       <Footer />

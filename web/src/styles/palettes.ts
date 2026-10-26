@@ -23,6 +23,7 @@ export const fairyfloss = {
   mist: '#e0daf2', // secondary text
   haze: '#b8afdd', // borders of controls
   dusk: '#a99fd0', // chart grid lines
+  iris: '#6a5f96', // highlight behind the current group: chart text on it at 5.3:1
 } as const
 
 /** Pure black and white with saturated accents, for the high contrast theme. */

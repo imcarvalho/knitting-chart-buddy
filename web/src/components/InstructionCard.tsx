@@ -10,10 +10,10 @@ interface Props {
   groupCount: number
 }
 
-/** The current group's instruction. A polite live region, so each new group is announced. */
+/** The current group's instruction. Screen readers hear each step through RowView's announcer. */
 export function InstructionCard({ doc, group, rowNumber, groupIndex, groupCount }: Props) {
   return (
-    <section className={s.card} aria-live="polite" aria-atomic="true" data-testid="instruction">
+    <section className={s.card} aria-label="Current instruction" data-testid="instruction">
       {group ? (
         <>
           <p className={s.position} data-testid="instruction-pos">
@@ -50,7 +50,8 @@ function CableDetail({ doc, group }: { doc: PatternDoc; group: Group }) {
         </div>
       </div>
       <p className={s.cableText}>{group.text}</p>
-      <ol className={s.steps} aria-label="Steps">
+      {/* Short form of the sentence above: hidden from screen readers, which read the sentence. */}
+      <ol className={s.steps} aria-hidden="true">
         <li>
           sl{cn.count} to cn, {holdFront ? 'FRONT' : 'BACK'}
         </li>

@@ -46,7 +46,13 @@ export function ChartStrip({ doc, chart, row, group, reducedMotion }: Props) {
   const label = `Row ${row.number}${group ? `, current group on column${group.cols.length > 1 ? 's' : ''} ${group.cols.join(', ')}` : ''}`
 
   return (
-    <div className={s.scroller} ref={scroller}>
+    <div
+      className={s.scroller}
+      ref={scroller}
+      role="region"
+      aria-label="Chart, current row with the rows above and below"
+      tabIndex={0}
+    >
       <svg
         className={s.strip}
         width={width}
@@ -55,6 +61,7 @@ export function ChartStrip({ doc, chart, row, group, reducedMotion }: Props) {
         role="img"
         aria-label={label}
       >
+        <g aria-hidden="true">
         {above && <RowCells doc={doc} row={above} y={yAbove} h={CH_CONTEXT} context />}
         {hl && (
           <rect
@@ -95,6 +102,7 @@ export function ChartStrip({ doc, chart, row, group, reducedMotion }: Props) {
             </g>
           )
         })}
+        </g>
       </svg>
     </div>
   )

@@ -1,9 +1,9 @@
 import * as s from './HowTo.css'
 
 /** How to use the app, shown on the open screen and from the Help button. */
-export function HowTo() {
+export function HowTo({ id }: { id?: string }) {
   return (
-    <section className={s.howTo} aria-labelledby="how-to-title">
+    <section id={id} className={s.howTo} aria-labelledby="how-to-title">
       <h2 id="how-to-title">How to use it</h2>
       <ol className={s.steps}>
         <li>

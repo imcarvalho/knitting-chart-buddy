@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { slug, type PreparedChart } from '../extractor'
 import type { PatternDoc } from '../types'
 import { field, primary } from '../styles/ui.css'
@@ -18,6 +18,12 @@ export function ChartSetup({ prepared, onStart, onCancel }: Props) {
   const chart = preview.charts[0]
   const warnings = chart.warnings.filter((w) => w.severity === 'warning')
   const cableTypes = Object.values(preview.symbols).filter((s) => s.kind === 'cable').length
+  const headingRef = useRef<HTMLHeadingElement>(null)
+
+  // The file picker that had focus is gone: start screen readers at the result.
+  useEffect(() => {
+    headingRef.current?.focus()
+  }, [])
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
@@ -27,7 +33,9 @@ export function ChartSetup({ prepared, onStart, onCancel }: Props) {
 
   return (
     <form className={s.form} onSubmit={submit} aria-labelledby="setup-title">
-      <h2 id="setup-title">Chart read</h2>
+      <h2 id="setup-title" ref={headingRef} tabIndex={-1}>
+        Chart read
+      </h2>
       <p>
         <strong>{prepared.fileName}</strong>: {chart.rows.length} rows, {chart.construction === 'flat' ? 'worked flat' : 'worked in the round'}
         , {cableTypes} cable type{cableTypes === 1 ? '' : 's'} recognised.
