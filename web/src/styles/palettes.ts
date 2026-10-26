@@ -26,6 +26,29 @@ export const fairyfloss = {
   iris: '#6a5f96', // highlight behind the current group: chart text on it at 5.3:1
 } as const
 
+/** Dracula by Zeno Rocha, https://draculatheme.com/spec */
+export const dracula = {
+  // From the original theme.
+  background: '#282a36',
+  currentLine: '#44475a',
+  foreground: '#f8f8f2',
+  comment: '#6272a4',
+  cyan: '#8be9fd',
+  green: '#50fa7b',
+  orange: '#ffb86c',
+  pink: '#ff79c6',
+  purple: '#bd93f9',
+  red: '#ff5555',
+  yellow: '#f1fa8c',
+  backgroundDarker: '#21222c', // from the spec's UI shades: cards and chart cells
+  // Derived shades, to reach WCAG contrast: text 4.5:1 or more, lines and controls 3:1 or more.
+  // `comment` is only 3:1 on the background, too low for secondary text.
+  periwinkle: '#c3c8e6', // secondary text
+  slate: '#8b93c4', // borders of controls
+  steel: '#7c84b4', // chart grid lines
+  violet: '#54478a', // highlight behind the current group: chart text on it at 7.4:1
+} as const
+
 /** Pure black and white with saturated accents, for the high contrast theme. */
 export const highContrast = {
   black: '#000000',

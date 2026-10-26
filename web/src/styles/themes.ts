@@ -1,4 +1,4 @@
-import { fairyfloss as ff, highContrast as hc } from './palettes'
+import { dracula as dr, fairyfloss as ff, highContrast as hc } from './palettes'
 
 /** Semantic colour tokens. Every theme gives a value for each one (see tokens.css.ts). */
 export interface ThemeColors {
@@ -48,6 +48,28 @@ export const themes = {
       front: ff.candyPink,
       back: ff.mint,
       focus: ff.mint,
+    },
+  },
+  dracula: {
+    label: 'Dracula',
+    colorScheme: 'dark',
+    colors: {
+      bg: dr.background,
+      surface: dr.backgroundDarker,
+      text: dr.foreground,
+      muted: dr.periwinkle,
+      border: dr.slate,
+      accent: dr.purple,
+      accentText: dr.background,
+      cellBg: dr.backgroundDarker,
+      cellLine: dr.steel,
+      cellNone: dr.currentLine,
+      ink: dr.foreground,
+      highlightBg: dr.violet,
+      highlightOutline: dr.yellow,
+      front: dr.pink,
+      back: dr.cyan,
+      focus: dr.cyan,
     },
   },
   contrast: {

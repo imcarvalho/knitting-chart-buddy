@@ -61,7 +61,7 @@ them into a static CSS file at build time. Each component has its own `*.css.ts`
 
 `web/src/styles/` holds the shared parts, in three layers:
 
-- `palettes.ts`: colour primitives, the raw colours of each palette (fairyfloss, high contrast).
+- `palettes.ts`: colour primitives, the raw colours of each palette (fairyfloss, Dracula, high contrast).
 - `themes.ts`: each theme maps the semantic tokens (`bg`, `surface`, `text`, `accent`, `front`,
   `back`, ...) onto colours from its palette, and sets its label and colour scheme.
 - `tokens.css.ts`: the token contract. It turns every theme into CSS custom properties under
