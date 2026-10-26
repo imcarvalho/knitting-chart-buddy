@@ -120,7 +120,7 @@ export default function App() {
         </section>
       )}
       {open && showHelp && <HowTo id="help-panel" />}
-      <main>
+      <main className={s.main}>
         {open && chart ? (
           <RowView
             key={`${patternHash(open.doc)}:${chart.id}`}
