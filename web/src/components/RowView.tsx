@@ -131,7 +131,7 @@ export function RowView({ doc, chart, patternHash, reducedMotion }: Props) {
   const dirText = row.direction === 'rtl' ? 'right to left' : 'left to right'
 
   return (
-    <div>
+    <div className={s.view}>
       <header className={s.header}>
         <div>
           <h2 className={s.title} ref={headingRef} tabIndex={-1}>

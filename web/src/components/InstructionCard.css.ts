@@ -2,7 +2,6 @@ import { style, styleVariants } from '@vanilla-extract/css'
 import { vars } from '../styles/tokens.css'
 
 export const card = style({
-  margin: '14px 0 10px',
   padding: '16px 20px',
   border: `3px solid ${vars.color.highlightOutline}`,
   borderRadius: 14,

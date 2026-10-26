@@ -3,6 +3,14 @@ import { vars } from '../styles/tokens.css'
 
 const narrow = 'screen and (max-width: 640px)'
 
+/** The row view's sections, spaced by the gap alone: they set no outer margins of their own. */
+export const view = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 20,
+  '@media': { [narrow]: { gap: 12 } },
+})
+
 export const header = style({
   display: 'flex',
   justifyContent: 'space-between',
@@ -16,7 +24,7 @@ export const meta = style({
   display: 'flex',
   flexWrap: 'wrap',
   gap: '8px 14px',
-  margin: '4px 0 8px',
+  margin: '4px 0 0',
   color: vars.color.muted,
 })
 
@@ -43,14 +51,13 @@ export const tapArea = style({ touchAction: 'pan-x', userSelect: 'none' })
 
 export const nextPreview = style({ fontSize: '1.1em', margin: '0 0 6px' })
 
-export const note = style({ margin: '4px 0', color: vars.color.muted, fontSize: '0.85em' })
+export const note = style({ margin: '4px 0 0', color: vars.color.muted, fontSize: '0.85em' })
 
 export const controls = style({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
   gap: 8,
-  marginTop: 12,
 })
 
 /** Every button and input in the bar shares the height of Back and Next. */
@@ -76,4 +83,4 @@ export const jump = style({
 
 export const jumpInput = style({ width: '5em' })
 
-export const hint = style({ color: vars.color.muted, fontSize: '0.8em' })
+export const hint = style({ margin: 0, color: vars.color.muted, fontSize: '0.8em' })
