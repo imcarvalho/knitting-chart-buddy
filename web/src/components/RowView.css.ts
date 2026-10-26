@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { vars } from '../styles/tokens.css'
 
 const narrow = 'screen and (max-width: 640px)'
@@ -53,10 +53,14 @@ export const controls = style({
   marginTop: 12,
 })
 
+/** Every button and input in the bar shares the height of Back and Next. */
+const controlHeight = 56
+
+globalStyle(`${controls} button, ${controls} input`, { minHeight: controlHeight })
+
 /** Back and Next: the two buttons used all the time. On a phone they go first, side by side. */
 export const bigButton = style({
   minWidth: '7em',
-  minHeight: 56,
   fontSize: '1.15em',
   fontWeight: 700,
   '@media': { [narrow]: { flex: '1 1 40%', order: -1 } },
